@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/prettyla/public_html/
+    - /bin/rsync -a --exclude='.git' --exclude='.cpanel.yml' --exclude='config.php' --exclude='uploads/' --exclude='data/' --exclude='pretty_layers.sql' --exclude='install.php' --exclude='SETUP-NEW-PC.txt' ./ $DEPLOYPATH
