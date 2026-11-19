@@ -22,6 +22,7 @@ if (is_post()) {
 ?><!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin login · <?= e(setting('site_name', 'Lavanya')) ?></title>
+<?= favicon_tag() ?>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Playfair+Display:wght@600&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?= asset('assets/css/admin.css') ?>"><style><?= theme_css() ?></style></head>
 <body class="login-page login-simple">

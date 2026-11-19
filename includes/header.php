@@ -13,8 +13,7 @@ $icon = logo_icon();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e($pageTitle) ?></title>
 <meta name="description" content="<?= e(setting('tagline')) ?>">
-<?php if ($icon): ?><link rel="icon" href="<?= e(img_url($icon)) ?>"><?php else: ?>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23A58CC5'/><text x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Georgia'><?= e(mb_substr($siteName, 0, 1)) ?></text></svg>"><?php endif; ?>
+<?= favicon_tag() ?>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">

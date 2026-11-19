@@ -347,6 +347,20 @@ function logo_icon(): string
     return setting('logo_icon') ?: setting('logo');
 }
 
+/** <link rel="icon"> tag for the browser tab (storefront + admin) */
+function favicon_tag(): string
+{
+    $icon = logo_icon();
+    if ($icon) {
+        $src = img_url($icon);
+        $f = __DIR__ . '/../' . ltrim($icon, '/');
+        if (!preg_match('~^https?://~', $icon) && is_file($f)) $src .= '?v=' . filemtime($f);
+        return '<link rel="icon" href="' . e($src) . '"><link rel="apple-touch-icon" href="' . e($src) . '">';
+    }
+    $l = e(mb_substr(setting('site_name', 'Lavanya'), 0, 1));
+    return "<link rel=\"icon\" href=\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23A58CC5'/><text x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Georgia'>$l</text></svg>\">";
+}
+
 /** Homepage banner images uploaded by the admin */
 function hero_images(): array
 {
