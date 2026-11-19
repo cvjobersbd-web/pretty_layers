@@ -17,6 +17,7 @@ $icon = logo_icon();
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?= asset('assets/css/style.css') ?>">
+<link rel="stylesheet" href="<?= asset('assets/css/loader.css') ?>">
 <style><?= theme_css() ?></style>
 </head>
 <body>
@@ -25,16 +26,9 @@ $icon = logo_icon();
 </defs></svg>
 
 <?php if (setting('loader_enabled', '1') === '1'): ?>
-<div id="loader" aria-hidden="true">
-  <div class="loader-inner">
-    <div class="loader-orb">
-      <span class="loader-ring"></span>
-      <span class="loader-ring r2"></span>
-      <div class="loader-logo"><?php if ($icon): ?><img src="<?= e(img_url($icon)) ?>" alt=""><?php else: ?><span><?= e(mb_substr($siteName, 0, 1)) ?></span><?php endif; ?></div>
-    </div>
-    <div class="loader-name"><?php foreach (preg_split('//u', $siteName, -1, PREG_SPLIT_NO_EMPTY) as $i => $ch): ?><span style="animation-delay:<?= $i * 0.08 ?>s"><?= $ch === ' ' ? '&nbsp;' : e($ch) ?></span><?php endforeach; ?></div>
-    <div class="loader-bar"><i></i></div>
-  </div>
+<?php $ldBg = setting('loader_bg', 'soft'); if (!isset(loader_bgs()[$ldBg])) $ldBg = 'soft'; ?>
+<div id="loader" class="ld-bg-<?= e($ldBg) ?>" aria-hidden="true" data-time="<?= (int)round(max(0.5, min(5, (float)setting('loader_time', '1.4'))) * 1000) ?>" data-every="<?= setting('loader_every', '0') === '1' ? '1' : '0' ?>">
+  <?= loader_markup() ?>
 </div>
 <?php endif; ?>
 

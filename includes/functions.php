@@ -347,6 +347,37 @@ function logo_icon(): string
     return setting('logo_icon') ?: setting('logo');
 }
 
+/* ---------------- loading animation ---------------- */
+function loader_styles(): array
+{
+    return ['rings' => 'Spinning rings', 'ripple' => 'Water ripple', 'orbit' => 'Orbit dots', 'flip' => '3D coin flip',
+            'bounce' => 'Bounce', 'shine' => 'Glow & shine', 'heart' => 'Heartbeat', 'sparkle' => 'Sparkle ring'];
+}
+function loader_bgs(): array
+{
+    return ['soft' => 'Soft (theme)', 'white' => 'Plain white', 'color' => 'Theme colour', 'dark' => 'Dark'];
+}
+/** Loader markup. $o overrides saved settings (used by the admin previews). */
+function loader_markup(array $o = []): string
+{
+    $style = $o['style'] ?? setting('loader_style', 'rings');
+    if (!isset(loader_styles()[$style])) $style = 'rings';
+    $showName = $o['name'] ?? (setting('loader_name', '1') === '1');
+    $showBar  = $o['bar'] ?? (setting('loader_bar', '1') === '1');
+    $siteName = setting('site_name', 'Lavanya');
+    $icon = logo_icon();
+    $h = '<div class="ldr ld-' . $style . ($showName ? '' : ' no-name') . ($showBar ? '' : ' no-bar') . '"><div class="loader-orb">'
+       . '<span class="ld-x ld-ring"></span><span class="ld-x ld-ring r2"></span>'
+       . '<span class="ld-x ld-wave"></span><span class="ld-x ld-wave w2"></span><span class="ld-x ld-wave w3"></span>'
+       . '<span class="ld-x ld-track"></span><span class="ld-x ld-dots"><i></i><i></i><i></i></span>'
+       . '<span class="ld-x ld-halo"></span><span class="ld-x ld-dash"></span><span class="ld-x ld-dash d2"></span><span class="ld-x ld-shadow"></span>'
+       . '<div class="loader-logo">' . ($icon ? '<img src="' . e(img_url($icon)) . '" alt="">' : '<span>' . e(mb_substr($siteName, 0, 1)) . '</span>') . '</div></div>'
+       . '<div class="loader-name">';
+    foreach (preg_split('//u', $siteName, -1, PREG_SPLIT_NO_EMPTY) as $i => $ch)
+        $h .= '<span style="animation-delay:' . ($i * 0.08) . 's">' . ($ch === ' ' ? '&nbsp;' : e($ch)) . '</span>';
+    return $h . '</div><div class="loader-bar"><i></i></div></div>';
+}
+
 /** <link rel="icon"> tag for the browser tab (storefront + admin) */
 function favicon_tag(): string
 {

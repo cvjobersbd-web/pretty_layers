@@ -9,13 +9,14 @@
     document.body.classList.add('loading');
     let seen = false;
     try { seen = sessionStorage.getItem('lv_loader') === '1'; sessionStorage.setItem('lv_loader', '1'); } catch (e) {}
-    const minTime = seen ? 250 : 1400;
+    const full = parseInt(loader.dataset.time, 10) || 1400;
+    const minTime = (seen && loader.dataset.every !== '1') ? 250 : full;
     const start = Date.now();
     const hide = () => {
       setTimeout(() => { loader.classList.add('done'); document.body.classList.remove('loading'); revealCheck(); }, Math.max(0, minTime - (Date.now() - start)));
     };
     if (document.readyState === 'complete') hide(); else window.addEventListener('load', hide);
-    setTimeout(hide, 3000); // safety (e.g. slow fonts)
+    setTimeout(hide, Math.max(3000, full + 1000)); // safety (e.g. slow fonts)
   }
 
   /* ---------- Toasts ---------- */

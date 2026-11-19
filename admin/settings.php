@@ -11,7 +11,6 @@ if (is_post()) {
     if ($section === 'general') {
         foreach (['site_name', 'tagline', 'announcement'] as $k) set_setting($k, post($k));
         if (setting('site_name') === '') set_setting('site_name', 'Lavanya');
-        set_setting('loader_enabled', post('loader_enabled') ? '1' : '0');
         $err = null;
         if ($logo = save_upload($_FILES['logo'] ?? [], 'logo', $err)) { delete_upload(setting('logo')); set_setting('logo', $logo); }
         elseif (post('remove_logo')) { delete_upload(setting('logo')); set_setting('logo', ''); }
@@ -107,6 +106,15 @@ if (is_post()) {
         foreach (['phone', 'email', 'address', 'bkash_number', 'nagad_number', 'currency_symbol'] as $k) set_setting($k, post($k));
         foreach (['shipping_inside', 'shipping_outside', 'free_shipping_over', 'low_stock_default'] as $k) set_setting($k, max(0, (float)post($k)));
         flash('success', 'Store & delivery settings saved.');
+    } elseif ($section === 'loader') {
+        set_setting('loader_enabled', post('loader_enabled') ? '1' : '0');
+        set_setting('loader_style', array_key_exists(post('loader_style'), loader_styles()) ? post('loader_style') : 'rings');
+        set_setting('loader_bg', array_key_exists(post('loader_bg'), loader_bgs()) ? post('loader_bg') : 'soft');
+        set_setting('loader_name', post('loader_name') ? '1' : '0');
+        set_setting('loader_bar', post('loader_bar') ? '1' : '0');
+        set_setting('loader_every', post('loader_every') ? '1' : '0');
+        set_setting('loader_time', (string)max(0.5, min(5, round((float)post('loader_time'), 1) ?: 1.4)));
+        flash('success', 'Loading animation saved.');
     } elseif ($section === 'account') {
         $a = row('SELECT * FROM admins WHERE id = ?', [admin()['id']]);
         $new = (string)($_POST['new_password'] ?? '');
@@ -132,7 +140,7 @@ $title = 'Settings & Design'; $active = 'settings';
 require __DIR__ . '/includes/top.php';
 ?>
 <div class="pill-tabs">
-  <?php foreach (['general' => 'Name & Logo', 'home' => 'Home Setting', 'navbar' => 'Navbar Setting', 'footer' => 'Footer Setting', 'colors' => 'Colour theme', 'store' => 'Store & Delivery', 'account' => 'Admin account'] as $k => $l): ?>
+  <?php foreach (['general' => 'Name & Logo', 'loader' => 'Loading Animation', 'home' => 'Home Setting', 'navbar' => 'Navbar Setting', 'footer' => 'Footer Setting', 'colors' => 'Colour theme', 'store' => 'Store & Delivery', 'account' => 'Admin account'] as $k => $l): ?>
     <a href="?tab=<?= $k ?>" class="<?= $tab === $k ? 'on' : '' ?>"><?= $l ?></a>
   <?php endforeach; ?>
 </div>
@@ -160,10 +168,72 @@ require __DIR__ . '/includes/top.php';
     <label class="img-drop small" data-preview><img src="<?= e(img_url($s['logo_icon'] ?? '')) ?>" alt="" style="object-fit:contain"><span>Small square mark, e.g. just the first letter of your logo</span><input type="file" name="logo_icon" accept="image/*,.avif"></label>
     <?php if (!empty($s['logo_icon'])): ?><label class="a-check small"><input type="checkbox" name="remove_icon" value="1"> Remove icon (use main logo)</label><?php endif; ?>
     <h3 class="mt">Loading animation</h3>
-    <label class="a-check"><input type="checkbox" name="loader_enabled" value="1" <?= ($s['loader_enabled'] ?? '1') === '1' ? 'checked' : '' ?>> Show logo loading animation</label>
-    <p class="a-help">Shows your logo with a spinning ring while pages load. Plays fully on the first visit and very briefly afterwards.</p>
+    <p class="a-help">Choose the design, background and timing in the <a href="?tab=loader">Loading Animation</a> tab.</p>
   </section>
 </form>
+
+<?php elseif ($tab === 'loader'): $ls = setting('loader_style', 'rings'); $lbg = setting('loader_bg', 'soft'); ?>
+<link rel="stylesheet" href="<?= asset('assets/css/loader.css') ?>">
+<form method="post" id="ldForm">
+  <?= csrf_field() ?><input type="hidden" name="section" value="loader">
+  <section class="a-card">
+    <div class="a-card-head"><h3>Logo loading animation</h3>
+      <label class="a-check" style="margin:0"><input type="checkbox" name="loader_enabled" value="1" <?= setting('loader_enabled', '1') === '1' ? 'checked' : '' ?>> Show the loading animation</label></div>
+    <p class="a-help">Click a design to choose it. The small boxes play live with your own logo. Use <b>Full screen preview</b> to see exactly how customers will see it.</p>
+    <div class="ld-grid">
+      <?php foreach (loader_styles() as $k => $l): ?>
+        <label class="ld-pick"><input type="radio" name="loader_style" value="<?= $k ?>" <?= $ls === $k ? 'checked' : '' ?>>
+          <span class="ld-box ld-bg-<?= e($lbg) ?>"><span class="ld-scale"><?= loader_markup(['style' => $k, 'name' => false, 'bar' => false]) ?></span></span>
+          <b><?= e($l) ?></b></label>
+      <?php endforeach; ?>
+    </div>
+  </section>
+  <div class="a-grid-2">
+    <section class="a-card">
+      <h3>Look</h3>
+      <span class="a-fld"><span>Background</span></span>
+      <div class="ld-bgs">
+        <?php foreach (loader_bgs() as $k => $l): ?>
+          <label class="ld-bgpick"><input type="radio" name="loader_bg" value="<?= $k ?>" <?= $lbg === $k ? 'checked' : '' ?>><i class="ld-bg-<?= $k ?>"></i><span><?= e($l) ?></span></label>
+        <?php endforeach; ?>
+      </div>
+      <label class="a-check"><input type="checkbox" name="loader_name" value="1" <?= setting('loader_name', '1') === '1' ? 'checked' : '' ?>> Show the shop name under the logo</label>
+      <label class="a-check"><input type="checkbox" name="loader_bar" value="1" <?= setting('loader_bar', '1') === '1' ? 'checked' : '' ?>> Show the small progress line</label>
+    </section>
+    <section class="a-card">
+      <h3>Timing</h3>
+      <label class="a-fld"><span>Show for at least <b id="ldTimeOut"><?= e(setting('loader_time', '1.4')) ?></b> seconds</span>
+        <input type="range" name="loader_time" min="0.5" max="5" step="0.1" value="<?= e(setting('loader_time', '1.4')) ?>" oninput="document.getElementById('ldTimeOut').textContent=this.value"></label>
+      <label class="a-check"><input type="checkbox" name="loader_every" value="1" <?= setting('loader_every', '0') === '1' ? 'checked' : '' ?>> Play the full animation on every page</label>
+      <p class="a-help">When this is off (recommended), the full animation plays once when a customer first opens the site; after that pages open quickly with only a short flash.</p>
+    </section>
+  </div>
+  <div class="save-bar"><button class="a-btn a-btn-primary">Save loading animation</button><button type="button" class="a-btn a-btn-ghost" id="ldPreviewBtn">▶ Full screen preview</button></div>
+</form>
+<div id="ldPreview" hidden></div>
+<script>
+(() => {
+  const f = document.getElementById('ldForm'), pv = document.getElementById('ldPreview');
+  const tpl = <?= json_encode(loader_markup(['style' => 'rings', 'name' => true, 'bar' => true])) ?>;
+  const styles = <?= json_encode(array_keys(loader_styles())) ?>, bgs = <?= json_encode(array_keys(loader_bgs())) ?>;
+  const val = n => (f.querySelector('[name="' + n + '"]:checked') || {}).value;
+  f.addEventListener('change', e => {
+    if (e.target.name === 'loader_bg') document.querySelectorAll('.ld-box').forEach(b => { bgs.forEach(x => b.classList.remove('ld-bg-' + x)); b.classList.add('ld-bg-' + e.target.value); });
+  });
+  let t;
+  const close = () => { pv.hidden = true; pv.innerHTML = ''; clearTimeout(t); };
+  document.getElementById('ldPreviewBtn').addEventListener('click', () => {
+    pv.className = 'ld-bg-' + (val('loader_bg') || 'soft');
+    pv.innerHTML = tpl + '<small>Click anywhere to close</small>';
+    const r = pv.querySelector('.ldr');
+    styles.forEach(x => r.classList.remove('ld-' + x)); r.classList.add('ld-' + (val('loader_style') || 'rings'));
+    r.classList.toggle('no-name', !f.loader_name.checked); r.classList.toggle('no-bar', !f.loader_bar.checked);
+    pv.hidden = false;
+    t = setTimeout(close, Math.max(2500, parseFloat(f.loader_time.value) * 1000 + 1200));
+  });
+  pv.addEventListener('click', close);
+})();
+</script>
 
 <?php elseif ($tab === 'home'): $himgs = hero_images(); $fd = home_feature_defaults();
       $autoCount = (int)val('SELECT COUNT(*) FROM products WHERE is_active = 1') . '+'; ?>
