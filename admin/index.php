@@ -36,6 +36,21 @@ require __DIR__ . '/includes/top.php';
 ?>
 <p class="a-hello">Hello, <b><?= e(admin_name()) ?></b> 👋 Here's what's happening in your shop today.</p>
 
+<?php
+$acts = [];
+if (can('products'))  $acts[] = ['product-edit.php', '➕', 'Add new product', 'নতুন প্রোডাক্ট যোগ করুন', 'ba-1', ''];
+if (can('inventory')) $acts[] = ['inventory.php', '📦', 'Add / remove stock', 'স্টক বাড়ান বা কমান', '', ''];
+if (can('orders'))    $acts[] = ['orders.php?status=pending', '🛍️', 'New orders', 'নতুন অর্ডার দেখুন ও কনফার্ম করুন', '', $pending ?: ''];
+if (can('inventory')) $acts[] = ['inventory.php?filter=alert', '⚠️', 'Running out', 'যেগুলোর স্টক শেষ হয়ে আসছে', '', $lowCount ?: ''];
+if (can('settings'))  $acts[] = ['settings.php', '🎨', 'Change site look', 'লোগো, ব্যানার ছবি, রং বদলান', '', ''];
+$acts[] = ['../index.php" target="_blank', '🌐', 'Open my shop', 'কাস্টমার যেভাবে দেখে সেভাবে দেখুন', '', ''];
+?>
+<div class="big-acts six">
+  <?php foreach ($acts as [$href, $ic, $t, $bn, $cls, $badge]): ?>
+    <a class="big-act <?= $cls ?>" href="<?= $href ?>"><i><?= $ic ?></i><b><?= $t ?></b><small><?= $bn ?></small><?php if ($badge !== ''): ?><em><?= (int)$badge ?></em><?php endif; ?></a>
+  <?php endforeach; ?>
+</div>
+
 <div class="stat-grid">
   <div class="stat s1"><span>Today's sales</span><b><?= money($todaySales) ?></b><small><?= $todayOrders ?> order(s) today</small></div>
   <div class="stat s2"><span>This month</span><b><?= money($monthSales) ?></b><small>Total: <?= money($totalSales) ?></small></div>
@@ -99,4 +114,33 @@ require __DIR__ . '/includes/top.php';
     </ul>
   </section>
 </div>
+
+<section class="a-card help-card">
+  <div class="a-card-head"><h3>❓ How to… <small class="bn">— কিভাবে করবেন</small></h3></div>
+  <?php if (can('products') || can('inventory')): ?>
+  <details><summary>নতুন প্রোডাক্ট যোগ করবো কিভাবে?</summary><ol>
+    <li>উপরের <b>➕ Add new product</b> বাটনে চাপুন (অথবা Inventory পেজের <b>New product</b>)।</li>
+    <li>ছবি দিন, নাম আর দাম লিখুন, ক্যাটাগরি বেছে নিন।</li>
+    <li>সাইজ বাটনগুলোতে চাপুন (যেমন S, M, L), দরকার হলে কালার দিন।</li>
+    <li>প্রতিটা কতগুলো আছে লিখে <b>Add product</b> চাপুন। প্রোডাক্ট সাথে সাথে সাইটে চলে আসবে।</li></ol></details>
+  <?php endif; ?>
+  <?php if (can('inventory')): ?>
+  <details><summary>নতুন মাল এলে স্টক বাড়াবো কিভাবে?</summary><ol>
+    <li>বাম মেনু থেকে <b>Inventory</b> খুলুন, উপরে সার্চ বক্সে প্রোডাক্টের নাম লিখুন।</li>
+    <li>১টা বাড়াতে <b>+</b>, ১টা কমাতে <b>−</b> চাপুন। সাথে সাথে সেভ হয়।</li>
+    <li>অনেকগুলো এলে বক্সে মোট সংখ্যা লিখে <b>✓</b> চাপুন।</li></ol></details>
+  <?php endif; ?>
+  <?php if (can('orders')): ?>
+  <details><summary>অর্ডার এলে কী করবো?</summary><ol>
+    <li><b>🛍️ New orders</b> চাপুন, অর্ডারটা খুলুন।</li>
+    <li>কাস্টমারকে ফোন করে কনফার্ম করুন, তারপর Status বদলে <b>Confirmed</b> করুন।</li>
+    <li>পাঠিয়ে দিলে <b>Shipped</b>, পৌঁছালে <b>Delivered</b> করুন। বাতিল হলে <b>Cancelled</b> দিলে স্টক নিজে থেকে ফেরত আসবে।</li></ol></details>
+  <?php endif; ?>
+  <?php if (can('settings')): ?>
+  <details><summary>লোগো, ব্যানার ছবি বা রং বদলাবো কিভাবে?</summary><ol>
+    <li><b>Settings &amp; Design</b> খুলুন।</li>
+    <li>লোগো: <b>Name &amp; Logo</b> · ব্যানার ছবি ও লেখা: <b>Home Setting</b> · রং: <b>Colour theme</b>।</li>
+    <li>বদলে নিচের <b>Save</b> চাপুন, তারপর <b>Open my shop</b> দিয়ে দেখে নিন।</li></ol></details>
+  <?php endif; ?>
+</section>
 <?php require __DIR__ . '/includes/bottom.php'; ?>

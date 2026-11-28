@@ -1,11 +1,22 @@
+-- ============================================================
+-- Pretty Layers — FULL database (your data of 19 Nov 2026 + latest updates)
+-- Import from anywhere in phpMyAdmin:  Import → Choose file → Go
+-- Uses database `pretty_layers` (creates it if missing) and replaces
+-- the existing tables. Includes Super Admin login:
+--   Username: prettylayerss.com   (old admin/admin123 removed)
+-- ============================================================
+CREATE DATABASE IF NOT EXISTS `pretty_layers` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `pretty_layers`;
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 19, 2026 at 08:29 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Nov 19, 2026 at 03:48 AM
+-- Server version: 10.11.16-MariaDB
+-- PHP Version: 8.3.36
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,23 +38,21 @@ SET time_zone = "+00:00";
 -- Table structure for table `admins`
 --
 
+DROP TABLE IF EXISTS `admins`;
 CREATE TABLE `admins` (
   `id` int(10) UNSIGNED NOT NULL,
   `username` varchar(60) NOT NULL,
   `password` varchar(255) NOT NULL,
   `name` varchar(100) DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `role` varchar(10) DEFAULT 'admin',
-  `permissions` text DEFAULT NULL,
-  `is_active` tinyint(4) DEFAULT 1
+  `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `admins`
 --
 
-INSERT INTO `admins` (`id`, `username`, `password`, `name`, `created_at`, `role`, `permissions`, `is_active`) VALUES
-(2, 'prettylayerss.com', '$2y$10$V8sQKp476sTsfmSJgceQuet1Tm6xEBJFgOPKbQZYxfPVJ6/gI529e', 'Super Admin', '2026-11-19 11:19:16', 'super', '', 1);
+INSERT INTO `admins` (`id`, `username`, `password`, `name`, `created_at`) VALUES
+(1, 'admin', '$2y$10$y1FzaDxMfPhUoJESaPXBueKBXxtBym1rdxduTvjRS2tvMDKf1tPXe', 'Administrator', '2026-11-16 17:37:23');
 
 -- --------------------------------------------------------
 
@@ -51,6 +60,7 @@ INSERT INTO `admins` (`id`, `username`, `password`, `name`, `created_at`, `role`
 -- Table structure for table `categories`
 --
 
+DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(120) NOT NULL,
@@ -93,6 +103,7 @@ INSERT INTO `categories` (`id`, `name`, `slug`, `image`, `description`, `sort_or
 -- Table structure for table `customers`
 --
 
+DROP TABLE IF EXISTS `customers`;
 CREATE TABLE `customers` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(120) NOT NULL,
@@ -112,6 +123,7 @@ CREATE TABLE `customers` (
 -- Table structure for table `newsletter`
 --
 
+DROP TABLE IF EXISTS `newsletter`;
 CREATE TABLE `newsletter` (
   `id` int(10) UNSIGNED NOT NULL,
   `email` varchar(150) NOT NULL,
@@ -124,6 +136,7 @@ CREATE TABLE `newsletter` (
 -- Table structure for table `orders`
 --
 
+DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
   `id` int(10) UNSIGNED NOT NULL,
   `order_no` varchar(30) NOT NULL,
@@ -162,6 +175,7 @@ INSERT INTO `orders` (`id`, `order_no`, `customer_name`, `phone`, `email`, `addr
 -- Table structure for table `order_items`
 --
 
+DROP TABLE IF EXISTS `order_items`;
 CREATE TABLE `order_items` (
   `id` int(10) UNSIGNED NOT NULL,
   `order_id` int(11) NOT NULL,
@@ -196,6 +210,7 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variant_id`, `name`,
 -- Table structure for table `products`
 --
 
+DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products` (
   `id` int(10) UNSIGNED NOT NULL,
   `category_id` int(11) DEFAULT NULL,
@@ -308,6 +323,7 @@ INSERT INTO `products` (`id`, `category_id`, `name`, `slug`, `sku`, `short_desc`
 -- Table structure for table `product_images`
 --
 
+DROP TABLE IF EXISTS `product_images`;
 CREATE TABLE `product_images` (
   `id` int(10) UNSIGNED NOT NULL,
   `product_id` int(11) NOT NULL,
@@ -339,6 +355,7 @@ INSERT INTO `product_images` (`id`, `product_id`, `path`, `sort_order`) VALUES
 -- Table structure for table `settings`
 --
 
+DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
   `skey` varchar(100) NOT NULL,
   `svalue` text DEFAULT NULL
@@ -358,7 +375,7 @@ INSERT INTO `settings` (`skey`, `svalue`) VALUES
 ('color_primary', '#C27BD6'),
 ('color_text', '#2E1F2D'),
 ('currency_symbol', '৳'),
-('db_version', '10'),
+('db_version', '9'),
 ('email', 'hello@prettylayers.shop'),
 ('facebook', '#'),
 ('free_shipping_over', '3000'),
@@ -397,6 +414,7 @@ INSERT INTO `settings` (`skey`, `svalue`) VALUES
 -- Table structure for table `stock_movements`
 --
 
+DROP TABLE IF EXISTS `stock_movements`;
 CREATE TABLE `stock_movements` (
   `id` int(10) UNSIGNED NOT NULL,
   `variant_id` int(11) DEFAULT NULL,
@@ -776,6 +794,7 @@ INSERT INTO `stock_movements` (`id`, `variant_id`, `product_id`, `qty_change`, `
 -- Table structure for table `variants`
 --
 
+DROP TABLE IF EXISTS `variants`;
 CREATE TABLE `variants` (
   `id` int(10) UNSIGNED NOT NULL,
   `product_id` int(11) NOT NULL,
@@ -1150,6 +1169,7 @@ INSERT INTO `variants` (`id`, `product_id`, `size`, `color`, `sku`, `stock`) VAL
 -- Table structure for table `wishlist`
 --
 
+DROP TABLE IF EXISTS `wishlist`;
 CREATE TABLE `wishlist` (
   `id` int(10) UNSIGNED NOT NULL,
   `customer_id` int(11) NOT NULL,
@@ -1253,7 +1273,7 @@ ALTER TABLE `wishlist`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -1314,8 +1334,17 @@ ALTER TABLE `variants`
 --
 ALTER TABLE `wishlist`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+-- ---------- Latest updates (Super Admin & admin roles) ----------
+ALTER TABLE `admins` ADD COLUMN `role` VARCHAR(10) DEFAULT 'admin', ADD COLUMN `permissions` TEXT NULL, ADD COLUMN `is_active` TINYINT DEFAULT 1;
+DELETE FROM `admins` WHERE `username` = 'admin';
+INSERT INTO `admins` (`username`, `password`, `name`, `role`, `permissions`, `is_active`, `created_at`) VALUES
+('prettylayerss.com', '$2y$10$V8sQKp476sTsfmSJgceQuet1Tm6xEBJFgOPKbQZYxfPVJ6/gI529e', 'Super Admin', 'super', '', 1, '2026-11-19 11:19:16');
+UPDATE `settings` SET `svalue` = '10' WHERE `skey` = 'db_version';
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+SET FOREIGN_KEY_CHECKS = 1;

@@ -14,6 +14,8 @@ $nav = [
 ];
 $nav = array_filter($nav, fn($k) => can($k), ARRAY_FILTER_USE_KEY);
 if (is_super()) $nav['admins'] = ['admins.php', 'Admin Users', '<path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/>'];
+$navBn = ['dashboard' => 'হোম', 'products' => 'সব প্রোডাক্ট', 'categories' => 'ক্যাটাগরি', 'orders' => 'অর্ডার', 'customers' => 'কাস্টমার',
+          'inventory' => 'স্টক যোগ / কমানো', 'history' => 'স্টকের হিসাব', 'settings' => 'লোগো, ছবি, রং', 'admins' => 'অ্যাডমিন যোগ'];
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +34,7 @@ if (is_super()) $nav['admins'] = ['admins.php', 'Admin Users', '<path d="M12 2l8
     <?php foreach ($nav as $k => $n): ?>
       <a href="<?= $n[0] ?>" class="<?= ($active ?? '') === $k ? 'on' : '' ?>">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><?= $n[2] ?></svg>
-        <span><?= $n[1] ?></span><?php if (!empty($n[3])): ?><em class="<?= $k === 'inventory' ? 'warn' : '' ?>"><?= $n[3] ?></em><?php endif; ?>
+        <span><?= $n[1] ?><small><?= $navBn[$k] ?? '' ?></small></span><?php if (!empty($n[3])): ?><em class="<?= $k === 'inventory' ? 'warn' : '' ?>"><?= $n[3] ?></em><?php endif; ?>
       </a>
     <?php endforeach; ?>
   </nav>

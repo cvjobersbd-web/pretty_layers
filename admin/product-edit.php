@@ -115,67 +115,79 @@ require __DIR__ . '/includes/top.php';
 ?>
 <?php if ($errors): ?><div class="a-alert a-alert-error"><?= implode('<br>', array_map('e', $errors)) ?></div><?php endif; ?>
 
+<div class="pe-mode"><span id="peModeTxt"></span><button type="button" id="peModeBtn"></button></div>
+<script>
+(() => { let full = false; try { full = localStorage.getItem('pe_full') === '1'; } catch (e) {}
+  const set = f => { document.body.classList.toggle('pe-simple', !f);
+    document.getElementById('peModeTxt').innerHTML = f ? 'Showing <b>all fields</b>.' : '✨ <b>Simple view</b> — only the important fields. <span class="bn">শুধু দরকারি ঘরগুলো দেখানো হচ্ছে।</span>';
+    document.getElementById('peModeBtn').textContent = f ? 'Simple view' : '⚙ Show all fields'; };
+  set(full);
+  document.getElementById('peModeBtn').addEventListener('click', () => { full = !full; try { localStorage.setItem('pe_full', full ? '1' : '0'); } catch (e) {} set(full); });
+})();
+</script>
 <form method="post" enctype="multipart/form-data" class="pe-grid">
   <?= csrf_field() ?>
   <div class="pe-main">
     <section class="a-card">
       <h3>Basic information</h3>
-      <label class="a-fld"><span>Product name *</span><input name="name" value="<?= e($f['name']) ?>" required placeholder="e.g. Floral Embroidered Cotton Kurti"></label>
+      <label class="a-fld"><span>Product name * <small class="fhint">প্রোডাক্টের নাম</small></span><input name="name" value="<?= e($f['name']) ?>" required placeholder="e.g. Floral Embroidered Cotton Kurti"></label>
       <div class="a-row">
-        <label class="a-fld"><span>Category</span><select name="category_id"><option value="">— None —</option><?php foreach ($cats as $c): ?><option value="<?= $c['id'] ?>" <?= $f['category_id'] == $c['id'] ? 'selected' : '' ?>><?= e($c['name']) ?><?= $c['is_active'] ? '' : ' (hidden)' ?></option><?php endforeach; ?></select></label>
-        <label class="a-fld"><span>SKU / Product code</span><input name="sku" value="<?= e($f['sku']) ?>" placeholder="Auto if empty"></label>
+        <label class="a-fld"><span>Category <small class="fhint">কোন ভাগে দেখাবে</small></span><select name="category_id"><option value="">— None —</option><?php foreach ($cats as $c): ?><option value="<?= $c['id'] ?>" <?= $f['category_id'] == $c['id'] ? 'selected' : '' ?>><?= e($c['name']) ?><?= $c['is_active'] ? '' : ' (hidden)' ?></option><?php endforeach; ?></select></label>
+        <label class="a-fld adv"><span>SKU / Product code</span><input name="sku" value="<?= e($f['sku']) ?>" placeholder="Auto if empty"></label>
       </div>
-      <label class="a-fld"><span>Short description</span><input name="short_desc" value="<?= e($f['short_desc']) ?>" maxlength="250" placeholder="One line shown under the price"></label>
-      <label class="a-fld"><span>Full description</span><textarea name="description" rows="7"><?= e($f['description']) ?></textarea></label>
+      <label class="a-fld adv"><span>Short description</span><input name="short_desc" value="<?= e($f['short_desc']) ?>" maxlength="250" placeholder="One line shown under the price"></label>
+      <label class="a-fld"><span>Description <small class="fhint">কাপড়, মাপ, যত্ন ইত্যাদি (ঐচ্ছিক)</small></span><textarea name="description" rows="7"><?= e($f['description']) ?></textarea></label>
     </section>
 
     <section class="a-card">
       <h3>Pricing</h3>
       <div class="a-row a-row-3">
-        <label class="a-fld"><span>Regular price (<?= e(setting('currency_symbol', '৳')) ?>) *</span><input type="number" step="0.01" min="0" name="price" value="<?= e($f['price']) ?>" required></label>
-        <label class="a-fld"><span>Sale price</span><input type="number" step="0.01" min="0" name="sale_price" value="<?= (float)$f['sale_price'] > 0 ? e($f['sale_price']) : '' ?>" placeholder="Optional"></label>
-        <label class="a-fld"><span>Cost price <i class="tip" title="Your buying cost. Used for profit and stock value reports. Not shown to customers.">?</i></span><input type="number" step="0.01" min="0" name="cost_price" value="<?= e($f['cost_price']) ?>"></label>
+        <label class="a-fld"><span>Price (<?= e(setting('currency_symbol', '৳')) ?>) * <small class="fhint">বিক্রির দাম</small></span><input type="number" step="0.01" min="0" name="price" value="<?= e($f['price']) ?>" required></label>
+        <label class="a-fld"><span>Sale price <small class="fhint">ছাড়ের দাম (ঐচ্ছিক)</small></span><input type="number" step="0.01" min="0" name="sale_price" value="<?= (float)$f['sale_price'] > 0 ? e($f['sale_price']) : '' ?>" placeholder="Optional"></label>
+        <label class="a-fld adv"><span>Cost price <i class="tip" title="Your buying cost. Used for profit and stock value reports. Not shown to customers.">?</i></span><input type="number" step="0.01" min="0" name="cost_price" value="<?= e($f['cost_price']) ?>"></label>
       </div>
     </section>
 
     <section class="a-card">
-      <div class="a-card-head"><h3>Variants &amp; stock (Inventory)</h3></div>
-      <p class="a-help">Each size / colour combination has its own stock. Leave size and colour empty for a product with a single option (e.g. a bag). Changing stock here is saved in <a href="stock-history.php">Stock History</a>.</p>
+      <div class="a-card-head"><h3>Sizes, colours &amp; stock <small class="bn">— সাইজ, কালার ও কতগুলো আছে</small></h3></div>
+      <p class="a-help">Tap the sizes below, add colours if needed, write how many of each, then press <b>Generate</b>. <span class="bn">একটাই সাইজ হলে (যেমন ব্যাগ) সাইজ-কালার খালি রেখে শুধু স্টক লিখুন।</span></p>
       <div class="gen-box">
         <input id="genSizes" placeholder="Sizes e.g. S, M, L, XL">
         <input id="genColors" placeholder="Colours e.g. Red, Blue">
         <input id="genStock" type="number" min="0" placeholder="Stock each" style="max-width:120px">
-        <button type="button" class="a-btn a-btn-sm" id="genBtn">Generate variants</button>
+        <button type="button" class="a-btn a-btn-sm a-btn-primary" id="genBtn">Generate</button>
       </div>
+      <div class="chips" data-chips="genSizes" style="margin-top:2px"><?php foreach (['S', 'M', 'L', 'XL', 'XXL', 'Free Size', '32', '34', '36', '38', '40', '32B', '34B', '36B'] as $ch): ?><button type="button"><?= $ch ?></button><?php endforeach; ?></div>
+      <div class="chips" data-chips="genColors"><?php foreach (['Black', 'White', 'Pink', 'Red', 'Purple', 'Nude', 'Blue', 'Maroon'] as $ch): ?><button type="button"><?= $ch ?></button><?php endforeach; ?></div>
       <div class="a-table-wrap"><table class="a-table v-table" id="vTable">
-        <thead><tr><th>Size</th><th>Colour</th><th>Variant SKU</th><th>Stock</th><th></th></tr></thead>
+        <thead><tr><th>Size</th><th>Colour</th><th class="adv">Variant SKU</th><th>Stock</th><th></th></tr></thead>
         <tbody>
           <?php foreach ($variants as $v): ?>
             <tr>
               <td><input type="hidden" name="v_id[]" value="<?= (int)$v['id'] ?>"><input name="v_size[]" value="<?= e($v['size']) ?>" placeholder="e.g. M"></td>
               <td><input name="v_color[]" value="<?= e($v['color']) ?>" placeholder="e.g. Lavender"></td>
-              <td><input name="v_sku[]" value="<?= e($v['sku']) ?>" placeholder="Auto"></td>
+              <td class="adv"><input name="v_sku[]" value="<?= e($v['sku']) ?>" placeholder="Auto"></td>
               <td><input type="number" min="0" name="v_stock[]" value="<?= (int)$v['stock'] ?>" class="v-stock"></td>
               <td><button type="button" class="icon-x" data-rm-row title="Remove">✕</button></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
-        <tfoot><tr><td colspan="3"><button type="button" class="a-btn a-btn-sm a-btn-ghost" id="addRow">+ Add variant</button></td><td colspan="2"><b>Total: <span id="vTotal">0</span></b></td></tr></tfoot>
+        <tfoot><tr><td colspan="2"><button type="button" class="a-btn a-btn-sm a-btn-ghost" id="addRow">+ Add variant</button></td><td class="adv"></td><td colspan="2"><b>Total: <span id="vTotal">0</span></b></td></tr></tfoot>
       </table></div>
-      <label class="a-fld" style="max-width:260px;margin-top:14px"><span>Low stock alert at <i class="tip" title="When any variant's stock falls to this number or below, you'll see an alert on the dashboard and inventory page.">?</i></span><input type="number" min="0" name="low_stock" value="<?= e($f['low_stock']) ?>"></label>
+      <label class="a-fld adv" style="max-width:260px;margin-top:14px"><span>Low stock alert at <i class="tip" title="When any variant's stock falls to this number or below, you'll see an alert on the dashboard and inventory page.">?</i></span><input type="number" min="0" name="low_stock" value="<?= e($f['low_stock']) ?>"></label>
     </section>
   </div>
 
   <aside class="pe-side">
     <section class="a-card">
       <h3>Publish</h3>
-      <label class="a-check"><input type="checkbox" name="is_active" value="1" <?= $f['is_active'] ? 'checked' : '' ?>> Visible on shop</label>
-      <label class="a-check"><input type="checkbox" name="is_featured" value="1" <?= $f['is_featured'] ? 'checked' : '' ?>> Featured product ★</label>
+      <label class="a-check"><input type="checkbox" name="is_active" value="1" <?= $f['is_active'] ? 'checked' : '' ?>> Visible on shop <small class="fhint">টিক না থাকলে সাইটে দেখাবে না</small></label>
+      <label class="a-check adv"><input type="checkbox" name="is_featured" value="1" <?= $f['is_featured'] ? 'checked' : '' ?>> Featured product ★</label>
       <button class="a-btn a-btn-primary a-btn-block"><?= $isNew ? 'Add product' : 'Save changes' ?></button>
       <a href="products.php" class="a-muted-link">← Back to products</a>
     </section>
     <section class="a-card">
-      <h3>Main image</h3>
+      <h3>Main picture <small class="bn">— প্রধান ছবি</small></h3>
       <label class="img-drop" data-preview>
         <img src="<?= e(img_url($f['image'])) ?>" alt="">
         <span>Click to upload (JPG, PNG, WEBP, AVIF — max 5 MB). Best size 800×1000.</span>
@@ -184,7 +196,7 @@ require __DIR__ . '/includes/top.php';
       <?php if (!$isNew && $f['image']): ?><label class="a-check small"><input type="checkbox" name="remove_main" value="1"> Remove current image</label><?php endif; ?>
     </section>
     <section class="a-card">
-      <h3>Gallery images</h3>
+      <h3>More pictures <small class="bn">— আরও ছবি</small></h3>
       <div class="gal-grid">
         <?php foreach ($gallery as $g): ?>
           <label class="gal-item"><img src="<?= e(img_url($g['path'])) ?>" alt=""><span><input type="checkbox" name="rm_img[]" value="<?= $g['id'] ?>"> remove</span></label>
@@ -198,7 +210,7 @@ require __DIR__ . '/includes/top.php';
 <template id="vRowTpl"><tr>
   <td><input type="hidden" name="v_id[]" value="0"><input name="v_size[]" placeholder="e.g. M"></td>
   <td><input name="v_color[]" placeholder="e.g. Lavender"></td>
-  <td><input name="v_sku[]" placeholder="Auto"></td>
+  <td class="adv"><input name="v_sku[]" placeholder="Auto"></td>
   <td><input type="number" min="0" name="v_stock[]" value="0" class="v-stock"></td>
   <td><button type="button" class="icon-x" data-rm-row title="Remove">✕</button></td>
 </tr></template>

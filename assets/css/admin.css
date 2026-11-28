@@ -455,3 +455,93 @@ html{scroll-behavior:smooth;scroll-padding-top:90px}
 #ldPreview small{position:absolute;bottom:24px;left:0;right:0;text-align:center;color:#8a7f90;font-size:13px}
 @media (max-width:1100px){.ld-grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:480px){.ld-box{height:120px}.ld-scale{transform:scale(.55)}}
+
+/* ================= Easy mode: big buttons, Bangla hints, inventory ================= */
+.bn,.a-nav small,.big-act small,.help-card,.inv-tip{font-family:"Hind Siliguri",Jost,sans-serif}
+.a-nav a>span small{display:block;font-size:11.5px;opacity:.62;font-weight:400;line-height:1.2;margin-top:1px}
+.bn{font-weight:400;color:var(--muted);font-size:.85em}
+
+.big-acts,.inv-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.big-acts.six{grid-template-columns:repeat(3,1fr)}
+.big-act{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;font:inherit;color:var(--dark);background:#fff;border:2px solid transparent;border-radius:18px;padding:18px 20px;cursor:pointer;
+  box-shadow:0 8px 24px -18px rgba(30,20,40,.35);transition:transform .15s,border-color .15s,box-shadow .15s;position:relative}
+.big-act:hover{transform:translateY(-2px);border-color:var(--primary-soft);box-shadow:0 14px 30px -18px rgba(var(--primary-rgb),.6)}
+.big-act.static{cursor:default}.big-act.static:hover{transform:none;border-color:transparent}
+.big-act i{font-style:normal;font-size:26px;line-height:1;margin-bottom:8px}
+.big-act b{font-size:16.5px;font-weight:600}
+.big-act small{font-size:13.5px;color:var(--muted)}
+.big-act.ba-1{background:var(--accent);color:#fff}.big-act.ba-1 small{color:rgba(255,255,255,.85)}
+.big-act.ba-1:hover{border-color:var(--dark)}
+.big-act em{position:absolute;top:14px;right:14px;font-style:normal;font-size:12px;font-weight:600;background:#e8a33a;color:#fff;border-radius:20px;padding:2px 9px}
+
+.help-card details{border-top:1px solid #f0ebf3;padding:12px 0}
+.help-card details:first-of-type{border-top:0}
+.help-card summary{cursor:pointer;font-weight:600;font-size:15px;color:var(--dark)}
+.help-card ol{margin:10px 0 0;padding-left:22px;line-height:1.85;font-size:15px}
+
+.inv-tip{background:var(--primary-softer);border-radius:14px;padding:12px 16px;margin-bottom:18px;font-size:15px}
+.inv-list{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:10px}
+.inv-list>.a-empty{grid-column:1/-1}
+.inv-card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 8px 24px -18px rgba(30,20,40,.3)}
+.inv-head{display:flex;align-items:center;gap:14px;padding-bottom:12px;border-bottom:1px solid #f0ebf3;margin-bottom:6px}
+.inv-head img{width:56px;height:66px;border-radius:10px;object-fit:cover;background:#f6f2f8;flex:none}
+.inv-title{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.inv-title b{color:var(--dark);font-size:15.5px}
+.inv-title small{color:var(--muted);font-size:13px}
+.inv-total{font-size:13px;color:var(--muted)}.inv-total b{color:var(--dark)}
+.inv-var{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:12px;transition:background .3s}
+.inv-var+.inv-var{border-top:1px dashed #f0ebf3}
+.inv-var.flash{animation:invFlash 1s ease}
+.inv-var.busy{opacity:.55;pointer-events:none}
+@keyframes invFlash{0%{background:rgba(var(--primary-rgb),.22)}100%{background:transparent}}
+.iv-name{flex:1;font-weight:600;font-size:14.5px;min-width:70px}
+.iv-badge .sb{white-space:nowrap}
+.stepper{display:flex;align-items:center;border:1.5px solid #e6dfea;border-radius:12px;overflow:hidden;background:#fff}
+.stepper button{width:40px;height:40px;border:0;background:#faf7fb;font-size:22px;line-height:1;cursor:pointer;color:var(--dark);transition:background .15s}
+.stepper button:hover{background:var(--primary-softer);color:var(--accent)}
+.stepper button:active{background:var(--primary-soft)}
+.stepper input{width:58px;height:40px;border:0;text-align:center;font:600 16px Jost,sans-serif;color:var(--dark);-moz-appearance:textfield;padding:0}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.iv-save{height:40px;padding:0 14px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-size:17px;cursor:pointer}
+.a-toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);background:var(--dark);color:#fff;padding:12px 20px;border-radius:14px;font-size:14.5px;
+  box-shadow:0 14px 34px -12px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:999;max-width:92vw}
+.a-toast.show{opacity:1;transform:translate(-50%,0)}
+.a-toast.bad{background:#c0392b}
+
+.qa-card .a-card-head small{font-size:14px}
+.qa-form{display:grid;grid-template-columns:260px 1fr;gap:26px}
+.qa-pic .img-drop{aspect-ratio:4/5;height:auto}
+.step-t{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--dark);margin:4px 0 12px;font-size:15.5px}
+.step-t em{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:13px}
+.step-t small{font-weight:400}
+.step-t:not(:first-child){margin-top:20px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:-6px 0 14px}
+.chips button{border:1.5px solid #e6dfea;background:#fff;border-radius:20px;padding:5px 13px;font:500 13.5px Jost,sans-serif;cursor:pointer;color:var(--dark);transition:.15s}
+.chips button:hover{border-color:var(--primary)}
+.chips button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.qa-sum{background:#faf7fb;border-radius:12px;padding:10px 14px;font-size:14px;margin:4px 0 14px}
+.qa-form details.more{margin-bottom:16px}
+.qa-form details.more summary{cursor:pointer;font-weight:500;color:var(--accent);margin-bottom:8px}
+.qa-btns{display:flex;gap:10px;flex-wrap:wrap}
+.qa-btns .a-btn-primary{padding-left:28px;padding-right:28px;font-size:15.5px}
+
+/* simple product form: advanced fields hidden until asked */
+body.pe-simple .adv{display:none!important}
+.pe-mode{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--primary-softer);border-radius:14px;padding:10px 16px;margin-bottom:18px;font-size:14.5px}
+.pe-mode button{border:0;background:#fff;border-radius:10px;padding:7px 14px;font:500 13.5px Jost,sans-serif;cursor:pointer;color:var(--accent)}
+.fhint{display:block;font-family:"Hind Siliguri",Jost,sans-serif;font-size:12.5px;color:var(--muted);font-weight:400;margin-top:1px}
+
+@media (max-width:1100px){.big-acts,.inv-actions{grid-template-columns:repeat(2,1fr)}.big-acts.six{grid-template-columns:repeat(2,1fr)}.inv-list{grid-template-columns:1fr}}
+@media (max-width:760px){.qa-form{grid-template-columns:1fr}.qa-pic .img-drop{aspect-ratio:auto;height:200px}}
+@media (max-width:520px){
+  .big-act{padding:14px 16px}.big-act b{font-size:15px}.big-act i{font-size:22px}
+  .inv-var{flex-wrap:wrap}.iv-name{flex-basis:100%}
+  .stepper button{width:46px;height:44px}.stepper input{height:44px}
+}
+/* readable Bangla sizes */
+.a-nav a>span small{font-size:12.5px;opacity:.75}
+.big-act small{font-size:14.5px}
+.fhint{font-size:13.5px}
+.bn{font-size:.9em}
+@media (max-width:640px){.a-filters input[name=q]{flex:1 1 100%;min-width:0;width:100%}}
+@media (max-width:520px){.inv-var .stepper{margin-left:auto}}
