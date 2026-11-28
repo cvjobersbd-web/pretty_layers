@@ -545,3 +545,12 @@ body.pe-simple .adv{display:none!important}
 .bn{font-size:.9em}
 @media (max-width:640px){.a-filters input[name=q]{flex:1 1 100%;min-width:0;width:100%}}
 @media (max-width:520px){.inv-var .stepper{margin-left:auto}}
+
+/* password eye + clear history */
+.pw-wrap{position:relative;display:block}
+.pw-wrap input{width:100%;padding-right:48px!important}
+.pw-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:none;border-radius:10px;color:var(--muted);cursor:pointer;display:grid;place-items:center}
+.pw-eye:hover{color:var(--accent);background:var(--primary-softer)}
+.clear-box{display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:#fff6f5;border:1px solid #f6d6d2;border-radius:14px;padding:10px 14px;margin-bottom:18px}
+.clear-box>span{flex:1;min-width:200px}
+.clear-box select{padding:9px 12px;border:1.5px solid #e6e0ea;border-radius:12px;background:#fff;font:inherit}

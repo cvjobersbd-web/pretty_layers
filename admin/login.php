@@ -36,4 +36,5 @@ if (is_post()) {
     <button class="a-btn a-btn-primary a-btn-block">Sign in</button>
     <a href="../index.php" class="a-muted-link">← Back to shop</a>
   </form>
+<script src="<?= asset('assets/js/admin.js') ?>"></script>
 </body></html>

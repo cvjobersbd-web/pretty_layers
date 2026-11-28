@@ -1,6 +1,21 @@
 <?php
 require __DIR__ . '/includes/init.php';
 
+/* ---- clear history (Super Admin only) — stock numbers are NOT changed ---- */
+if (is_post() && post('op') === 'clear') {
+    csrf_check();
+    if (!is_super()) { flash('error', 'Only the Super Admin can clear the history.'); redirect('stock-history.php'); }
+    $days = (int)post('older_than');
+    if ($days > 0) {
+        $n = q('DELETE FROM stock_movements WHERE created_at < ?', [date('Y-m-d H:i:s', strtotime("-$days days"))])->rowCount();
+        flash('success', "$n old record(s) older than $days days deleted. Stock numbers are unchanged.");
+    } else {
+        $n = q('DELETE FROM stock_movements')->rowCount();
+        flash('success', "History cleared ($n record(s) deleted). Stock numbers are unchanged.");
+    }
+    redirect('stock-history.php');
+}
+
 $type = get('type'); $qtext = get('q'); $pid = (int)get('product');
 $where = ['1=1']; $params = [];
 if ($type) { $where[] = 'm.type = ?'; $params[] = $type; }
@@ -25,6 +40,19 @@ require __DIR__ . '/includes/top.php';
   <?php if ($type || $qtext || $pid): ?><a href="stock-history.php" class="a-muted-link">Clear</a><?php endif; ?>
   <span class="a-count"><?= $total ?> record(s)</span>
 </form>
+<?php if (is_super()): ?>
+<form method="post" class="clear-box" onsubmit="return confirm(this.older_than.value === '0' ? 'Delete ALL stock history?\nসব হিস্ট্রি মুছে যাবে। স্টকের সংখ্যা বদলাবে না।' : 'Delete the old history records?\nপুরোনো হিস্ট্রি মুছে যাবে। স্টকের সংখ্যা বদলাবে না।')">
+  <?= csrf_field() ?><input type="hidden" name="op" value="clear">
+  <span>🧹 <b>Clear history</b> <small class="bn">— হিস্ট্রি মুছুন (স্টক কমবে-বাড়বে না)</small></span>
+  <select name="older_than">
+    <option value="0">Everything (সব)</option>
+    <option value="7">Older than 7 days</option>
+    <option value="30">Older than 30 days</option>
+    <option value="90">Older than 3 months</option>
+  </select>
+  <button class="a-btn a-btn-danger">Clear</button>
+</form>
+<?php endif; ?>
 <div class="a-card no-pad">
   <div class="a-table-wrap"><table class="a-table">
     <thead><tr><th>Date</th><th>Product</th><th>Type</th><th>Change</th><th>Balance</th><th>Reference / note</th><th>By</th></tr></thead>
